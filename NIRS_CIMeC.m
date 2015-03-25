@@ -7,7 +7,7 @@ function NIRS_CIMeC
 %
 % Written by Matteo Caffini, PhD
 % CIMeC - Universita' dgli Studi di Trento
-% started March, 5th 2015 in Rovereto (TN)
+% on March, 5th 2015 in Rovereto (TN)
 %
 % Copyright (C) 2015 Matteo Caffini <matteo.caffini@unitn.it>
 %
@@ -285,15 +285,19 @@ end
                 end
             end
             if isnan(current_curves_hbo)
-                hx = graph2d.constantline(0,'LineStyle',':','Color',[.7 .7 .7]);
-                changedependvar(hx,'x');
-                hy = graph2d.constantline(0,'LineStyle',':','Color',[.7 .7 .7]);
-                changedependvar(hy,'y');
+                if exist('graph2d.constantline','class') == 8
+                    hx = graph2d.constantline(0,'LineStyle',':','Color',[.7 .7 .7]);
+                    changedependvar(hx,'x');
+                    hy = graph2d.constantline(0,'LineStyle',':','Color',[.7 .7 .7]);
+                    changedependvar(hy,'y');
+                end
             else
-                hx = graph2d.constantline(0,'LineStyle',':','Color',[.7 .7 .7]);
-                changedependvar(hx,'x');
-                hy = graph2d.constantline(0,'LineStyle',':','Color',[.7 .7 .7]);
-                changedependvar(hy,'y');
+                if exist('graph2d.constantline','class') == 8
+                    hx = graph2d.constantline(0,'LineStyle',':','Color',[.7 .7 .7]);
+                    changedependvar(hx,'x');
+                    hy = graph2d.constantline(0,'LineStyle',':','Color',[.7 .7 .7]);
+                    changedependvar(hy,'y');
+                end
                 if blocks
                     plot(time_in_seconds,current_curves_hbo(:,:,aa),'-r','Linewidth',1);
                     hold on
