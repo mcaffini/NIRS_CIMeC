@@ -137,7 +137,7 @@ for ww = 1:1:nplotW
                         'Value',1,...
                         'Position',[ww*spaceW+(ww-1.15)*plotW hh*spaceH+(hh-.4)*plotH PopUpW PopUpH],...
                         'Enable','on',...
-                        'Callback',@refresh_plots);
+                        'Callback',@reset_plots);
                     conditionsList = {'Biomotion','Scramble','Rotation'};
                     Hmain.popUpCondition = uicontrol('parent',Hmain.mainFigure,...
                         'Style','popupmenu',...
@@ -147,7 +147,7 @@ for ww = 1:1:nplotW
                         'Value',1,...
                         'Position',[ww*spaceW+(ww-1.15)*plotW hh*spaceH+(hh-.7)*plotH PopUpW PopUpH],...
                         'Enable','on',...
-                        'Callback',@refresh_plots);
+                        'Callback',@reset_plots);
                 case 3
                     % Do nothing
                     continue;
@@ -373,18 +373,46 @@ end
     end
 
     function reset_plots(h,evt)
-        %current_subject = get(Hmain.popUpSubject,'Value');
+        % set objects visibility to on
+        %set(Hmain.checkboxReject(bb),'Enable','on');
+        %set(Hmain.Axes(bb),'Visible','on');
+        
+        %set(Hmain.checkboxReject(bb),'Value',0);
+        current_subject = get(Hmain.popUpSubject,'Value');
+        current_condition_val = get(Hmain.popUpCondition,'Value');
+        condition_list = get(Hmain.popUpCondition,'String');
+        current_condition = condition_list{current_condition_val};
+        % get block of interest from BOI_table
+        boi_table_complete = allData(current_subject).BOI_table;
+        boi_table = boi_table_complete(1:2:end,:);
+        boi_biomotion = boi_table(1,:);
+        boi_scramble = boi_table(2,:);
+        boi_rotation = boi_table(3,:);
+        
+        [i,j] = find(boi_biomotion > 0);
+        [spam,egg] = sort(i);
+        boi_biomotion_string = num2str(j(egg));
+        
+        [i,j] = find(boi_scramble > 0);
+        [spam,egg] = sort(i);
+        boi_scramble_string = num2str(j(egg));
+        
+        [i,j] = find(boi_rotation > 0);
+        [spam,egg] = sort(i);
+        boi_rotation_string = num2str(j(egg));
+        
+        switch current_condition
+            case 'Biomotion'
+                strrep(boi_biomotion_string,' ',',')
+                boi_string = ['[',regexprep(boi_biomotion_string,' +',','),']'];
+            case 'Scramble'
+                boi_string = ['[',regexprep(boi_scramble_string,' +',','),']'];
+            case 'Rotation'
+                boi_string = ['[',regexprep(boi_rotation_string,' +',','),']'];;
+        end
+        % set block of interest from BOI_table
         for bb=1:1:nplots
-            % set objects visibility to on
-            set(Hmain.checkboxReject(bb),'Enable','on');
-            set(Hmain.Axes(bb),'Visible','on');
-            % set objects values to whatever the f@#k you like
-            set(Hmain.popUpSubject,'Value',3);
-            set(Hmain.checkboxReject(bb),'Value',0);
-            % set block of interest from BOI_table            
-%             boi_table = allData(current_subject).BOI_table;
-%             boi_blocks = find(boi_table(1:2:end)>0);
-%            set(Hmain.editBlocks(bb),'String',boi_string);
+            set(Hmain.editBlocks(bb),'String',boi_string);
         end
         refresh_plots;
     end
@@ -406,6 +434,8 @@ end
 set(Hmain.mainFigure,'Visible','on');
 set(Hmain.checkboxBlocks,'Value',0);
 set(Hmain.checkboxAverage,'Value',1);
+% initial subject, set value to whatever the f@#k you like
+set(Hmain.popUpSubject,'Value',3);
 reset_plots;
 %refresh_plots;
 end
